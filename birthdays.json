@@ -1,10 +1,10 @@
 [
     {
         "name": "Foo",
-        "birthday_month_date": "01-02"
+        "birthday_month_date": "11-20"
     },
     {
         "name": "Bar",
-        "birthday_month_date": "11-20"
+        "birthday_month_date": "01-02"
     }
 ]
