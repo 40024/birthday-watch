@@ -7,11 +7,18 @@ def print_menu():
     print("1. Print birthdays")
     print("2. Add birthday")
     print("3. Sort birthdays")
+    print("4. Delete birthday by name")
+    print("5. Delete all birthdays")
+    print("6. Toggle menu printing")
     print("")
 
 def print_file():
     with open("birthdays.json", "r", encoding="utf-8") as json_file:
         file = json.load(json_file)
+
+    if len(file) == 0:
+        print("Entires empty")
+        return
 
     for entry in file:
         print(entry["name"], entry["birthday_month_date"])
@@ -114,9 +121,31 @@ def sort_birthdays():
     with open("birthdays.json", "w", encoding="utf-8") as json_file:
         json.dump(sorted_data, json_file, ensure_ascii=False, indent=4)
 
+def delete_birthdays():
+    with open("birthdays.json", "w", encoding="utf-8") as json_file:
+        json.dump([], json_file)
+
+def delete_person_birthday(rm_name):
+    with open("birthdays.json", "r", encoding="utf-8") as json_file:
+        people = json.load(json_file)
+
+        new_data = list()
+
+        for person in people:
+            if person["name"].lower() == rm_name.lower():
+                pass
+            else:
+                new_data.append(person)
+
+        with open("birthdays.json", "w", encoding="utf-8") as json_file:
+            json.dump(new_data, json_file, ensure_ascii=False, indent=4)
+
 def main():
+    printing_menu = True
+
     while True:
-        print_menu()
+        if printing_menu:
+            print_menu()
         # Input
         option = int(input("Please enter an option: "))
         if option == 0:
@@ -133,6 +162,25 @@ def main():
         elif option == 3:
             sort_birthdays()
             print("Birthdays have been sorted\n")
+        elif option == 4:
+            rm_name = input("Type the name of the person you wish to remove from your list of entries: ")
+            delete_person_birthday(rm_name)
+            print("Entries updated\n")
+        elif option == 5:
+            if input("Type \"DELETE\" to confirm deletion of ALL birthdays, otherwise type anything else: ") == "DELETE":
+                delete_birthdays()
+                print("Birthdays deleted")
+            else:
+                print("No entries changed")
+            print("")
+        elif option == 6:
+            if printing_menu:
+                print("Print menu set to False")
+                printing_menu = False
+            else:
+                print("Print menu set to True")
+                printing_menu = True
+            print("")
 
 if __name__ == "__main__":
     main()
