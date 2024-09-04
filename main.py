@@ -6,6 +6,7 @@ def print_menu():
     print("0. Quit")
     print("1. Print birthdays")
     print("2. Add birthday")
+    print("3. Sort birthdays")
     print("")
 
 def print_file():
@@ -95,6 +96,24 @@ def add_birthday(name, birthday_month_date):
     with open("birthdays.json", 'w', encoding='utf-8') as file:
         json.dump(existing_data, file, ensure_ascii=False, indent=4)
 
+def sort_birthdays():
+    with open("birthdays.json", "r", encoding="utf-8") as json_file:
+        file = json.load(json_file)
+
+    unsorted_birthdays = list()
+
+    for entry in file:
+        unsorted_birthdays.append(entry)
+
+    def convert_to_date_tuple(birthday_str):
+        month, day = map(int, birthday_str.split('-'))
+        return (month, day)
+
+    sorted_data = sorted(unsorted_birthdays, key=lambda x: convert_to_date_tuple(x['birthday_month_date']))
+
+    with open("birthdays.json", "w", encoding="utf-8") as json_file:
+        json.dump(sorted_data, json_file, ensure_ascii=False, indent=4)
+
 def main():
     while True:
         print_menu()
@@ -105,10 +124,15 @@ def main():
             exit()
         elif option == 1:
             print_file()
+            print("")
         elif option == 2:
             name = input("Enter recipient name: ")
             birthday_month_date = input("Enter recipient birthday {MM-DD}: ")
             add_birthday(name, birthday_month_date)
+            print(f"Added {name}'s birthday with the date of {birthday_month_date}\n")
+        elif option == 3:
+            sort_birthdays()
+            print("Birthdays have been sorted\n")
 
 if __name__ == "__main__":
     main()
