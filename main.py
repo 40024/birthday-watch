@@ -23,26 +23,25 @@ def print_file():
     for entry in file:
         print(entry["name"], entry["birthday_month_date"])
 
-def num_from_month_name(birthday_month_date):
+def normalize_date(birthday_month_date):
     # Separate month and date
     try: 
         if "-" in birthday_month_date:
             month, day = birthday_month_date.split("-")
         elif " " in birthday_month_date:
             month, day = birthday_month_date.split(" ")
+        elif "," in birthday_month_date:
+            month, day = birthday_month_date.split(",")
     except:
         print("Error: Poorly formed month-date")
         quit()
 
-    # Format month if needed
+    # Change month name to month number if needed
     try:
         month = int(month)
         if not 1 <= month <= 12:
-            print("Date has to be between 1 and 12, no entry added")
+            print("Month has to be between 1 and 12, no entry added")
             return
-        else:
-            # Return original date if no formatting needed
-            return birthday_month_date
     except:
         month = str(month)
         months = {
@@ -75,25 +74,51 @@ def num_from_month_name(birthday_month_date):
         month = month.lower()
 
         if month in months:
-            # Maintain month congruency in json file (prevents dates such as 1-01)
-            if months[month] < 10:
-                return f"0{months[month]}-{day}"
-            else:
-                return f"{months[month]}-{day}"
+            month = {months[month]}
         else:
-            print(f"Month: {month}")
-            print("Month could not be read, please use month name")
+            print("Month could not be read, please use full month name or number")
+
+    # Maintain month congruency in json file (prevents dates such as 1-01)
+    if month < 10:
+        month = f"0{str(month)}"
+
+    # Maintain day congruency in json file (prevents dates such as 01-1)
+    print(day)
+    try:
+        day = int(day)
+        if day > 10:
+            day = str(day)
+        else:
+            day = f"0{day}"
+    except:
+        print("Poorly formed day")
+
+    return f"{month}-{day}"
 
 def verify_name_not_date(name):
-    if "-" in name.rstrip() or " " in name.rstrip():
+    if "-" in name.rstrip():
         print("Birthday detected in name input field, please verify input\n")
         return False
+
+def name_in_birthdays(name):
+    with open("birthdays.json", "r", encoding="utf-8") as json_file:
+        file = json.load(json_file)
+
+        for entry in file:
+            if entry["name"] == name:
+                return True
+    return False
 
 def add_birthday(name, birthday_month_date):
     verify_name_not_date(name)
 
     # Format name and birthday
-    birthday_month_date = num_from_month_name(birthday_month_date)
+    birthday_month_date = normalize_date(birthday_month_date)
+
+    # If birthday_month_date is invalid (ex. 13 is month) then end function early
+    if birthday_month_date == None:
+        print("")
+        return
 
     new_data = [
         {
@@ -175,6 +200,10 @@ def main():
             name = input("Enter recipient name: ")
             if verify_name_not_date(name) == False:
                 continue
+            if name_in_birthdays(name) == True:
+                print(f"{name} already has an entry\n")
+                continue
+
             birthday_month_date = input("Enter recipient birthday {MM-DD}: ")
 
             add_birthday(name, birthday_month_date)
