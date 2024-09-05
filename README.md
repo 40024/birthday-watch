@@ -1,12 +1,13 @@
-# Birthday Tracker Utility purpose
+# Birthday Tracker Utility features and purpose
 
-- Effortless Birthday Management: Seamlessly track and organize birthdays stored in a JSON file.
-- Read, Write, Sort: Conveniently read existing birthdays, add new entries, and sort them with just a few commands.
-- Smart Sorting: Automatically sort birthdays by month and date to keep your list well-organized and easy to navigate.
+I found that managing birthdays through calendars can be cumbersome. To address this, I developed this utility to offer more granular control over birthday management, ensuring that any missed birthdays are due to my oversight rather than calendar malfunctions. It was also a valuable exercise in input normalization.
 
-Streamline your birthday tracking with this user-friendly utility and never miss an important date again!
+- Read, write, update: Read existing birthdays, add new ones, or delete dated/incorrect entries.
+- Sorting: Sort birthdays by month and date to keep your list easy to navigate.
+- Input normalization: Many checks against errors, which can be common entering mass amounts of data.
+- No duplicates: Built-in checks against duplicate entries.
 
-# Usage 
+# Usage
 ## Read Birthdays
 
 To read birthday data, use option 1:
