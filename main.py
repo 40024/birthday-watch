@@ -25,7 +25,14 @@ def print_file():
 
 def num_from_month_name(birthday_month_date):
     # Separate month and date
-    month, day = birthday_month_date.split("-")
+    try: 
+        if "-" in birthday_month_date:
+            month, day = birthday_month_date.split("-")
+        elif " " in birthday_month_date:
+            month, day = birthday_month_date.split(" ")
+    except:
+        print("Error: Poorly formed month-date")
+        quit()
 
     # Format month if needed
     try:
@@ -37,6 +44,7 @@ def num_from_month_name(birthday_month_date):
             # Return original date if no formatting needed
             return birthday_month_date
     except:
+        month = str(month)
         months = {
             "jan": 1,
             "feb": 2,
@@ -76,13 +84,20 @@ def num_from_month_name(birthday_month_date):
             print(f"Month: {month}")
             print("Month could not be read, please use month name")
 
+def verify_name_not_date(name):
+    if "-" in name.rstrip() or " " in name.rstrip():
+        print("Birthday detected in name input field, please verify input\n")
+        return False
+
 def add_birthday(name, birthday_month_date):
+    verify_name_not_date(name)
+
     # Format name and birthday
     birthday_month_date = num_from_month_name(birthday_month_date)
 
     new_data = [
         {
-            "name": name,
+            "name": name.rstrip(),
             "birthday_month_date": birthday_month_date
         }
     ]
@@ -102,6 +117,8 @@ def add_birthday(name, birthday_month_date):
     # Write the updated data back to the file
     with open("birthdays.json", 'w', encoding='utf-8') as file:
         json.dump(existing_data, file, ensure_ascii=False, indent=4)
+
+    print(f"Added {name.rstrip()}'s birthday with the date of {birthday_month_date}\n")
 
 def sort_birthdays():
     with open("birthdays.json", "r", encoding="utf-8") as json_file:
@@ -156,9 +173,11 @@ def main():
             print("")
         elif option == 2:
             name = input("Enter recipient name: ")
+            if verify_name_not_date(name) == False:
+                continue
             birthday_month_date = input("Enter recipient birthday {MM-DD}: ")
+
             add_birthday(name, birthday_month_date)
-            print(f"Added {name}'s birthday with the date of {birthday_month_date}\n")
         elif option == 3:
             sort_birthdays()
             print("Birthdays have been sorted\n")
